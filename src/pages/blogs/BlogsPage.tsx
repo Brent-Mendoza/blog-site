@@ -55,6 +55,13 @@ export default function BlogPage() {
             </h2>
             <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-2">{blog.content}</p>
+            {blog.image_url && (
+              <img
+                src={blog.image_url}
+                alt={blog.title}
+                className="w-full max-h-150 object-contain mb-2 rounded"
+              />
+            )}
             <p className="text-xs text-gray-500">
               Posted{" "}
               {new Date(blog.created_at).toLocaleDateString("en-PH", {

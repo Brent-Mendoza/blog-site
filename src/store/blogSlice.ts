@@ -8,6 +8,7 @@ interface Blog {
   user_id: string
   created_at: string
   updated_at: string
+  image_url: string | null
   profiles:
     | {
         username: string
@@ -37,7 +38,7 @@ export const fetchBlogs = createAsyncThunk(
       const { data, error } = await supabaseClient
         .from("blogs")
         .select(
-          "id, title, content, user_id, created_at, updated_at, profiles:profiles!inner(username)"
+          "id, title, content, user_id, image_url, created_at, updated_at, profiles:profiles!inner(username)"
         )
         .order("created_at", { ascending: false })
         .range(page * 3, page * 3 + 9)
@@ -53,7 +54,11 @@ export const fetchBlogs = createAsyncThunk(
 export const createBlog = createAsyncThunk(
   "blog/createBlog",
   async (
-    { title, content }: { title: string; content: string },
+    {
+      title,
+      content,
+      image_url,
+    }: { title: string; content: string; image_url?: string | null },
     { rejectWithValue }
   ) => {
     try {
@@ -63,7 +68,7 @@ export const createBlog = createAsyncThunk(
 
       const { data, error } = await supabaseClient
         .from("blogs")
-        .insert([{ title, content, user_id: user?.id }])
+        .insert([{ title, content, image_url, user_id: user?.id }])
         .select()
       if (error) throw error
       return data?.[0]
@@ -77,8 +82,33 @@ export const deleteBlog = createAsyncThunk(
   "blog/deleteBlog",
   async (id: number, { rejectWithValue }) => {
     try {
-      const { error } = await supabaseClient.from("blogs").delete().eq("id", id)
-      if (error) throw error
+      const { data: blog, error: fetchError } = await supabaseClient
+        .from("blogs")
+        .select("image_url")
+        .eq("id", id)
+        .single()
+
+      if (fetchError) throw fetchError
+
+      if (blog?.image_url) {
+        const imagePath = blog.image_url.split("/blog-images/")[1]
+
+        if (imagePath) {
+          const { error: storageError } = await supabaseClient.storage
+            .from("blog-images")
+            .remove([imagePath])
+
+          if (storageError) throw storageError
+        }
+      }
+
+      const { error: deleteError } = await supabaseClient
+        .from("blogs")
+        .delete()
+        .eq("id", id)
+
+      if (deleteError) throw deleteError
+
       return id
     } catch (error: any) {
       return rejectWithValue(error.message)
@@ -89,13 +119,28 @@ export const deleteBlog = createAsyncThunk(
 export const updateBlog = createAsyncThunk(
   "blog/updateBlog",
   async (
-    { id, title, content }: { id: number; title: string; content: string },
+    {
+      id,
+      title,
+      content,
+      image_url,
+    }: {
+      id: number
+      title: string
+      content: string
+      image_url?: string | null
+    },
     { rejectWithValue }
   ) => {
     try {
       const { data, error } = await supabaseClient
         .from("blogs")
-        .update({ title, content, updated_at: new Date().toISOString() })
+        .update({
+          title,
+          content,
+          image_url,
+          updated_at: new Date().toISOString(),
+        })
         .eq("id", id)
         .select()
       if (error) throw error
