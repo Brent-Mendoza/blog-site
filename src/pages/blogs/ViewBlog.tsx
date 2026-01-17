@@ -16,7 +16,7 @@ export default function ViewBlog() {
   const dispatch = useDispatch<AppDispatch>()
   const { blogs } = useSelector((state: RootState) => state.blogReducer)
   const { comments, loading: commentLoading } = useSelector(
-    (state: RootState) => state.commentReducer
+    (state: RootState) => state.commentReducer,
   )
   const { user } = useSelector((state: RootState) => state.authReducer)
 
@@ -29,7 +29,7 @@ export default function ViewBlog() {
   const [commentContent, setCommentContent] = useState("")
   const [commentImage, setCommentImage] = useState<File | null>(null)
   const [commentImagePreview, setCommentImagePreview] = useState<string | null>(
-    null
+    null,
   )
   const [editingCommentId, setEditingCommentId] = useState<number | null>(null)
   const [uploadingComment, setUploadingComment] = useState(false)
@@ -49,7 +49,7 @@ export default function ViewBlog() {
           hour: "2-digit",
           minute: "2-digit",
           timeZoneName: "short",
-        })
+        }),
       )
       setUpdatedAt(
         new Date(blog.updated_at).toLocaleDateString("en-PH", {
@@ -59,7 +59,7 @@ export default function ViewBlog() {
           hour: "2-digit",
           minute: "2-digit",
           timeZoneName: "short",
-        })
+        }),
       )
     } else {
       navigate("/blogs")
@@ -157,7 +157,7 @@ export default function ViewBlog() {
             id: editingCommentId,
             comment: commentContent,
             image_url: imageUrl,
-          })
+          }),
         )
 
         if (updateComment.fulfilled.match(result)) {
@@ -169,7 +169,7 @@ export default function ViewBlog() {
             blog_id: Number(id),
             comment: commentContent,
             image_url: imageUrl,
-          })
+          }),
         )
 
         if (createComment.fulfilled.match(result)) {
@@ -271,7 +271,7 @@ export default function ViewBlog() {
                   <p className="font-semibold text-sm">
                     {Array.isArray(comment.profiles)
                       ? comment.profiles?.[0]?.username
-                      : comment.profiles?.username ?? "Unknown User"}
+                      : (comment.profiles?.username ?? "Unknown User")}
                   </p>
                   <p className="text-xs text-gray-500">
                     {comment.created_at == comment.updated_at
@@ -283,7 +283,7 @@ export default function ViewBlog() {
                             day: "numeric",
                             hour: "2-digit",
                             minute: "2-digit",
-                          }
+                          },
                         )
                       : new Date(comment.updated_at).toLocaleDateString(
                           "en-PH",
@@ -293,7 +293,7 @@ export default function ViewBlog() {
                             day: "numeric",
                             hour: "2-digit",
                             minute: "2-digit",
-                          }
+                          },
                         )}
                   </p>
                 </div>
@@ -393,8 +393,8 @@ export default function ViewBlog() {
               {uploadingComment
                 ? "Submitting..."
                 : editingCommentId
-                ? "Update Comment"
-                : "Post Comment"}
+                  ? "Update Comment"
+                  : "Post Comment"}
             </button>
 
             {editingCommentId && (

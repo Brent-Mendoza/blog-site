@@ -7,11 +7,11 @@ import { useNavigate } from "react-router"
 export default function BlogPage() {
   const dispatch = useDispatch<AppDispatch>()
   const { loading, error, user } = useSelector(
-    (state: RootState) => state.authReducer
+    (state: RootState) => state.authReducer,
   )
 
   const { blogs, loading: blogLoading } = useSelector(
-    (state: RootState) => state.blogReducer
+    (state: RootState) => state.blogReducer,
   )
   const navigate = useNavigate()
 
@@ -46,19 +46,18 @@ export default function BlogPage() {
       {blogs.length === 0 && <h3 className="text-2xl mt-4">No blogs found</h3>}
       {blogs.length > 0 &&
         blogs.map((blog) => (
-          <div key={blog.id} className="mb-6 p-4 border rounded">
+          <div
+            key={blog.id}
+            className="mb-6 p-4 border rounded cursor-pointer"
+            onClick={() => navigate(`/blogs/${blog.id}/view`)}
+          >
             <h2 className="text-xl font-bold mb-2">
               From:{" "}
               {Array.isArray(blog.profiles)
                 ? blog.profiles?.[0]?.username
-                : blog.profiles?.username ?? "Unknown User"}
+                : (blog.profiles?.username ?? "Unknown User")}
             </h2>
-            <button
-              className="text-xl font-semibold mb-2 cursor-pointer hover:tracking-wider hover:underline duration-300"
-              onClick={() => navigate(`/blogs/${blog.id}/view`)}
-            >
-              {blog.title}
-            </button>
+            <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
             <p className="text-gray-700 mb-2">{blog.content}</p>
             {blog.image_url && (
               <img
@@ -96,13 +95,17 @@ export default function BlogPage() {
               <div className="">
                 <button
                   className="mt-2 mr-2 rounded bg-green-700 px-3 py-1.5 text-sm text-white hover:bg-green-400 cursor-pointer"
-                  onClick={() => navigate(`/blogs/${blog.id}/edit`)}
+                  onClick={(e) => {
+                    e.stopPropagation()
+                    navigate(`/blogs/${blog.id}/edit`)
+                  }}
                 >
                   Edit
                 </button>
                 <button
                   className="mt-2 rounded bg-red-700 px-3 py-1.5 text-sm text-white hover:bg-red-400 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
-                  onClick={async () => {
+                  onClick={async (e) => {
+                    e.stopPropagation()
                     await dispatch(deleteBlog(blog.id))
                     alert("Blog deleted successfully")
                     setPage(0)
