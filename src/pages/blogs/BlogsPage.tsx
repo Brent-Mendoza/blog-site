@@ -53,7 +53,12 @@ export default function BlogPage() {
                 ? blog.profiles?.[0]?.username
                 : blog.profiles?.username ?? "Unknown User"}
             </h2>
-            <h3 className="text-xl font-semibold mb-2">{blog.title}</h3>
+            <button
+              className="text-xl font-semibold mb-2 cursor-pointer hover:tracking-wider hover:underline duration-300"
+              onClick={() => navigate(`/blogs/${blog.id}/view`)}
+            >
+              {blog.title}
+            </button>
             <p className="text-gray-700 mb-2">{blog.content}</p>
             {blog.image_url && (
               <img
@@ -109,6 +114,13 @@ export default function BlogPage() {
                 </button>
               </div>
             )}
+            <button
+              className="text-sm text-gray-600 mt-2 hover:text-blue-600 hover:underline duration-300 cursor-pointer"
+              onClick={() => navigate(`/blogs/${blog.id}/view`)}
+            >
+              💬 {blog.comments?.[0]?.count ?? 0}{" "}
+              {blog.comments?.[0]?.count === 1 ? "comment" : "comments"}
+            </button>
           </div>
         ))}
       {blogs.length > 0 && (

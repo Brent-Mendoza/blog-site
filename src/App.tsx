@@ -10,6 +10,7 @@ import BlogPage from "./pages/blogs/BlogsPage.tsx"
 import BlogLayout from "./pages/BlogsLayout.tsx"
 import CreateBlog from "./pages/blogs/CreateBlog.tsx"
 import EditBlog from "./pages/blogs/EditBlog.tsx"
+import ViewBlog from "./pages/blogs/ViewBlog.tsx"
 
 function App() {
   const dispatch = useDispatch<AppDispatch>()
@@ -48,6 +49,7 @@ function App() {
         <Route index element={<BlogPage />} />
         <Route path="create" element={<CreateBlog />} />
         <Route path=":id/edit" element={<EditBlog />} />
+        <Route path=":id/view" element={<ViewBlog />} />
       </Route>
       <Route path="/" element={<Navigate to="/blogs" />} />
       <Route path="*" element={<Navigate to="/blogs" />} />

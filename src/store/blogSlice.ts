@@ -9,6 +9,7 @@ interface Blog {
   created_at: string
   updated_at: string
   image_url: string | null
+  comments: Array<{ count: number }>
   profiles:
     | {
         username: string
@@ -38,10 +39,10 @@ export const fetchBlogs = createAsyncThunk(
       const { data, error } = await supabaseClient
         .from("blogs")
         .select(
-          "id, title, content, user_id, image_url, created_at, updated_at, profiles:profiles!inner(username)"
+          "id, title, content, user_id, image_url, created_at, updated_at, profiles:profiles!inner(username), comments(count)"
         )
         .order("created_at", { ascending: false })
-        .range(page * 3, page * 3 + 9)
+        .range(page * 3, page * 3 + 2)
         .limit(3)
       if (error) throw error
       return data

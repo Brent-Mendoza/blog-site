@@ -25,6 +25,8 @@ export default function EditBlog() {
       setContent(blog.content)
       setImagePreview(blog.image_url ?? null)
       setOldImageUrl(blog.image_url ?? null)
+    } else {
+      navigate("/blogs")
     }
   }, [blogs, id])
 

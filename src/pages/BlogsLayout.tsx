@@ -1,4 +1,4 @@
-import { Navigate, Outlet } from "react-router"
+import { Navigate, Outlet, useNavigate } from "react-router"
 import { useDispatch, useSelector } from "react-redux"
 import type { RootState, AppDispatch } from "../store/store"
 import { signOut } from "../store/authSlice"
@@ -6,6 +6,7 @@ import { signOut } from "../store/authSlice"
 export default function BlogLayout() {
   const dispatch = useDispatch<AppDispatch>()
   const { session } = useSelector((state: RootState) => state.authReducer)
+  const navigate = useNavigate()
 
   if (!session) {
     return <Navigate to="/login" replace />
@@ -18,7 +19,12 @@ export default function BlogLayout() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="flex items-center justify-between border-b px-6 py-4">
-        <h1 className="text-xl font-semibold">Simple Blog Site</h1>
+        <h1
+          className="text-xl font-semibold cursor-pointer hover:underline hover:tracking-wider duration-300"
+          onClick={() => navigate("/blogs")}
+        >
+          Simple Blog Site
+        </h1>
 
         <button
           onClick={handleLogout}
