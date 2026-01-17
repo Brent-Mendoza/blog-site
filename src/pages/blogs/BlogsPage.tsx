@@ -119,7 +119,10 @@ export default function BlogPage() {
             )}
             <button
               className="text-sm text-gray-600 mt-2 hover:text-blue-600 hover:underline duration-300 cursor-pointer"
-              onClick={() => navigate(`/blogs/${blog.id}/view`)}
+              onClick={(e) => {
+                e.stopPropagation()
+                navigate(`/blogs/${blog.id}/view`)
+              }}
             >
               💬 {blog.comments?.[0]?.count ?? 0}{" "}
               {blog.comments?.[0]?.count === 1 ? "comment" : "comments"}
